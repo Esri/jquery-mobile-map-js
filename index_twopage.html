@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--
+
+    Sample application to demonstrate the jQueryHelper library.
+
+    -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Basic jQuery Mobile Map</title>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.7/js/esri/css/esri.css">
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+    <style type="text/css">
+        html,body, div[data-role ="page"] {
+            height: 100%;
+            width: 100%;
+            margin: 0px;
+            padding: 0px;
+        }
+        .ui-header{
+            margin: 0px !important;
+            padding: 0px !important;
+            float: left;
+        }
+        .ui-content{
+            height: 100%;
+            width: 100%;
+            margin: 0px;
+            padding: 0px;
+        }
+        .settings{
+            margin-left: auto;
+            margin-right: auto;
+            text-align:center;
+            width: 100%;
+        }
+
+        #mapDiv {
+            position: absolute;
+            background-color: #EEEEDD;
+            height: 100%;
+            width: 100%;
+            padding: 0px;
+            z-index: 0;
+            left: 0px;
+
+        }
+    </style>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+</head>
+
+<body>
+<div data-role="page" id="home">
+
+    <div data-theme="a" data-role="header" data-position="fixed">
+        <h3>HTML5 Geolocation</h3>
+        <a href="#settings" data-role="button" data-icon="gear" class="ui-btn-right" data-iconpos="notext">Settings</a>
+    </div>
+
+    <div data-role="content">
+        <div id="mapDiv"></div>
+    </div>
+
+</div>
+<div data-role="page" id="settings" data-add-back-btn="true">
+    <div data-role="header" data-position="fixed">
+        <h1>Settings</h1>
+    </div>
+    <div data-role="content">
+
+        <div class="settings" style="margin-top: 15px;">
+            <div>Geolocation:</div>
+            <select name="slider" id="slider-geo-on-off" data-role="slider" data-theme="a">
+                <option value="off">Off</option>
+                <option value="on" selected>On</option>
+            </select>
+        </div>
+     </div>
+</div>
+
+<script src="src/jQueryHelper.js"></script>
+<script src="http://js.arcgis.com/3.7/"></script>
+
+<script>
+    var map, helper = null;
+    var pageId = null;
+    var geoEnabled = false;
+
+    require(["esri/map","esri/symbols/PictureMarkerSymbol","dojo/domReady!"],
+            function(Map,PictureMarkerSymbol) {
+                map = new Map("mapDiv", {
+                    basemap: "topo",
+                    center: [-122.45,37.75], // long, lat
+                    zoom: 13
+                });
+
+                // Wait until map has loaded before starting geolocation
+                map.on("load",init);
+
+                $("#slider-geo-on-off").change(function(event){
+                    event.stopPropagation();
+                    var test = $(this);
+                    var value = test[0].selectedIndex == 1 ? true:false;
+                    geoEnabled = value;
+                })
+
+                // Listen for map loaded event from jqueryHelper.
+                $(document).on("helper-map-loaded",function(evt){
+                    console.log("Helper map was loaded. " + evt.message)
+                    map = helper.map;
+
+                    if(geoEnabled == true) {
+                        startGeolocation();
+                    }
+                })
+
+                // Create the marker symbol
+                var markerSymbol = new PictureMarkerSymbol({
+                    "angle":0,
+                    "xoffset":0,
+                    "yoffset":0,
+                    "type":"esriPMS",
+                    "url":"images/green-pin.png",
+                    "width":35,
+                    "height":35
+                })
+
+                function init(){
+
+                    try{
+                        helper = new jQueryHelper(map);
+                    }
+                    catch(err) {
+                        console.log("moo " + err.message);
+                    }
+
+                    //Some browsers don't show full height after onLoad
+                    map.reposition();
+                    map.resize();
+
+                    startGeolocation();
+                }
+
+                function startGeolocation(){
+                    navigator.geolocation.getCurrentPosition(locationSuccess,locationError,{setHighAccuracy:true});
+                }
+
+                // Handle location success
+                function locationSuccess(position){
+                    if(position.coords.latitude != null || position.coords.longitude != null){
+                        var wgsPt = new esri.geometry.Point(position.coords.longitude,position.coords.latitude);
+                        map.graphics.add(new esri.Graphic(wgsPt, markerSymbol));
+                        map.centerAndZoom(wgsPt, 14);
+                        helper.setCenterPt(position.coords.latitude,position.coords.longitude,4326);
+                        helper.setZoom(14);
+                    }
+                }
+
+                function locationError(err){
+                    console.log("LocationError: " + err.message);
+                }
+            });
+</script>
+
+</body>
+</html>
