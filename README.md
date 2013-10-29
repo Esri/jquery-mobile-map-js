@@ -1,4 +1,4 @@
-jquery-mobile-map-us
+jquery-mobile-map-js
 =================
 
 A helper library for multiple view jQuery mapping apps. Allows users to re-orient the phone in child views and then safely reconstitutes the map.
@@ -7,7 +7,9 @@ It also ensures the map is centered properly during orientation changes.
 
 ##Why? 
 
-Without this library, ymaps may perform inconsistently when a user navigates away from the map to a child view, rotates the phone and then returns to the map. It is a very common use case and this library provides a seamless solution.
+It handles map orientation so you don't have to!
+
+Without this library, maps perform inconsistently when a user navigates away from the map to a child view, rotates the phone and then returns to the map. It is a very common use case and this library provides a seamless solution.
 
 ##How to use?
 
@@ -16,6 +18,7 @@ See the included demo app: index_twopage.html.
 ##Features
 
 * jQueryHelper.js - This library takes over the life cycle of the map when users navigate to a child view. Similar to native device operating systems, this library destroys the map when a user navigates away to another page and changes the orientation of the phone. The map is then added back to the application when the user returns to the view containing the map. The approach minimizes inappropriate map behavior and provides a significantly better user experience.
+* jQuery event "helper-map-loaded" - notifies you when a map recreation event has occurred so that you can redraw or requery as appropriate.
 
 ##Dependencies
 * ArcGIS API for JavaScript
