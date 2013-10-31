@@ -1,9 +1,9 @@
 jquery-mobile-map-js
 =================
 
-A lightweight mobile helper library for handling map orientation so you don't have to. Use it with single and multiple view jQuery mapping apps, and it insures the map is centered properly after orientation changes and view transitions.
+A lightweight mobile helper library that automatically recenters the map after phone orientation changes and view transitions. Use it with single and multiple view jQuery mapping apps.
 
-Without this library, maps may perform inconsistently or break when a user rotates a device on the map page or child pages. 
+Without this library, a map may perform inconsistently or break when a user rotates a device on the map page or child pages. 
 
 ##How to use?
 
@@ -13,7 +13,7 @@ See the included demo app: index_twopage.html.
 
 * jQueryHelper.js - This library takes over the life cycle of the map when users navigate to a child view. 
 * Helper methods for handling more complex user interface situations that require manipulation of height and width.
-* jQuery event "helper-map-loaded" - notifies you when a map recreation event has occurred so that you can redraw or requery features as appropriate.
+* Custom jQuery event "helper-map-loaded" - notifies you when map has been recreated so that you can redraw or requery features as appropriate.
 
 
 ##Dependencies

@@ -86,7 +86,7 @@
 <script>
     var map, helper = null;
     var pageId = null;
-    var geoEnabled = false;
+    var geoEnabled = true;
 
     require(["esri/map","esri/symbols/PictureMarkerSymbol","dojo/domReady!"],
             function(Map,PictureMarkerSymbol) {
@@ -102,6 +102,22 @@
 
                 //Listen for map load event
                 map.on("load",init);
+
+                function init(){
+
+                    try{
+                        helper = new jQueryHelper(map);
+                    }
+                    catch(err) {
+                        console.log("Unable to initialize jQueryHelper " + err.message);
+                    }
+
+                    //Some browsers don't show full height after onLoad
+                    map.reposition();
+                    map.resize();
+
+                    startGeolocation();
+                }
 
                 // Listen for map loaded event from jqueryHelper.
                 $(document).on("helper-map-loaded",function(evt){
@@ -157,21 +173,6 @@
                     console.log("LocationError: " + err.message);
                 }
 
-                function init(){
-
-                    try{
-                        helper = new jQueryHelper(map);
-                    }
-                    catch(err) {
-                        console.log("moo " + err.message);
-                    }
-
-                    //Some browsers don't show full height after onLoad
-                    map.reposition();
-                    map.resize();
-
-                    startGeolocation();
-                }
             });
 </script>
 

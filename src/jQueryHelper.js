@@ -281,11 +281,11 @@ var jQueryHelper = function(/* Map */ map){
         var locationStr = this.getCenterPt().split(",");
         if(locationStr instanceof Array){
             var wgsPt = null;
-            if(wkid = 4326){
-                wgsPt = new esri.geometry.Point(lat,lon);
+            if(wkid == 4326){
+                wgsPt = new esri.geometry.Point(lon,lat);
             }
             else{
-                wgsPt = new esri.geometry.Point(lat,lon, new esri.SpatialReference({ wkid: wkid }));
+                wgsPt = new esri.geometry.Point(lon,lat, new esri.SpatialReference({ wkid: wkid }));
             }
 
             this.map.centerAt(wgsPt);
