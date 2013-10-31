@@ -3,12 +3,12 @@
 <head>
     <!--
 
-    Sample application to demonstrate the jQueryHelper library.
+    Sample application to demonstrate using the jQueryHelper library.
 
     -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
-    <title>Basic jQuery Mobile Map</title>
+    <title>Two Page jQuery Mobile Map</title>
     <link rel="stylesheet" href="http://js.arcgis.com/3.7/js/esri/css/esri.css">
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
     <style type="text/css">
@@ -96,15 +96,12 @@
                     zoom: 13
                 });
 
-                // Wait until map has loaded before starting geolocation
-                map.on("load",init);
+                ////////////////////
+                //Listeners
+                ////////////////////
 
-                $("#slider-geo-on-off").change(function(event){
-                    event.stopPropagation();
-                    var test = $(this);
-                    var value = test[0].selectedIndex == 1 ? true:false;
-                    geoEnabled = value;
-                })
+                //Listen for map load event
+                map.on("load",init);
 
                 // Listen for map loaded event from jqueryHelper.
                 $(document).on("helper-map-loaded",function(evt){
@@ -116,6 +113,18 @@
                     }
                 })
 
+                //Listen for Geolocation on/off button events
+                $("#slider-geo-on-off").change(function(event){
+                    event.stopPropagation();
+                    var test = $(this);
+                    var value = test[0].selectedIndex == 1 ? true:false;
+                    geoEnabled = value;
+                })
+
+                ////////////////////
+                //End of Listeners
+                ////////////////////
+
                 // Create the marker symbol
                 var markerSymbol = new PictureMarkerSymbol({
                     "angle":0,
@@ -126,6 +135,27 @@
                     "width":35,
                     "height":35
                 })
+
+                function startGeolocation(){
+                    navigator.geolocation.getCurrentPosition(locationSuccess,locationError,{setHighAccuracy:true});
+                }
+
+                // Handle location success
+                function locationSuccess(position){
+                    if(position.coords.latitude != null || position.coords.longitude != null){
+                        var wgsPt = new esri.geometry.Point(position.coords.longitude,position.coords.latitude);
+                        map.graphics.add(new esri.Graphic(wgsPt, markerSymbol));
+                        map.centerAndZoom(wgsPt, 14);
+
+                        //Set jQueryHelper properties
+                        helper.setCenterPt(position.coords.latitude,position.coords.longitude,4326);
+                        helper.setZoom(14);
+                    }
+                }
+
+                function locationError(err){
+                    console.log("LocationError: " + err.message);
+                }
 
                 function init(){
 
@@ -141,25 +171,6 @@
                     map.resize();
 
                     startGeolocation();
-                }
-
-                function startGeolocation(){
-                    navigator.geolocation.getCurrentPosition(locationSuccess,locationError,{setHighAccuracy:true});
-                }
-
-                // Handle location success
-                function locationSuccess(position){
-                    if(position.coords.latitude != null || position.coords.longitude != null){
-                        var wgsPt = new esri.geometry.Point(position.coords.longitude,position.coords.latitude);
-                        map.graphics.add(new esri.Graphic(wgsPt, markerSymbol));
-                        map.centerAndZoom(wgsPt, 14);
-                        helper.setCenterPt(position.coords.latitude,position.coords.longitude,4326);
-                        helper.setZoom(14);
-                    }
-                }
-
-                function locationError(err){
-                    console.log("LocationError: " + err.message);
                 }
             });
 </script>

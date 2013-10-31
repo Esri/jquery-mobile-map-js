@@ -1,15 +1,9 @@
 jquery-mobile-map-js
 =================
 
-A helper library for multiple view jQuery mapping apps. Allows users to re-orient the phone in child views and then safely reconstitutes the map.
+A lightweight mobile helper library for handling map orientation so you don't have to. Use it with single and multiple view jQuery mapping apps, and it insures the map is centered properly after orientation changes and view transitions.
 
-It also ensures the map is centered properly during orientation changes.
-
-##Why? 
-
-It handles map orientation so you don't have to!
-
-Without this library, maps perform inconsistently when a user navigates away from the map to a child view, rotates the phone and then returns to the map. It is a very common use case and this library provides a seamless solution.
+Without this library, maps may perform inconsistently or break when a user rotates a device on the map page or child pages. 
 
 ##How to use?
 
@@ -17,12 +11,14 @@ See the included demo app: index_twopage.html.
 		
 ##Features
 
-* jQueryHelper.js - This library takes over the life cycle of the map when users navigate to a child view. Similar to native device operating systems, this library destroys the map when a user navigates away to another page and changes the orientation of the phone. The map is then added back to the application when the user returns to the view containing the map. The approach minimizes inappropriate map behavior and provides a significantly better user experience.
-* jQuery event "helper-map-loaded" - notifies you when a map recreation event has occurred so that you can redraw or requery as appropriate.
+* jQueryHelper.js - This library takes over the life cycle of the map when users navigate to a child view. 
+* Helper methods for handling more complex user interface situations that require manipulation of height and width.
+* jQuery event "helper-map-loaded" - notifies you when a map recreation event has occurred so that you can redraw or requery features as appropriate.
+
 
 ##Dependencies
 * ArcGIS API for JavaScript
-* jQuery Mobile
+* jQuery and jQuery Mobile
 
 ## Resources
 

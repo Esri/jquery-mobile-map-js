@@ -1,5 +1,5 @@
 /**
- * Helper library for building mobile mapping applications with jQuery mobile.
+ * Helper library for building mobile ArcGIS mapping applications with jQuery mobile.
  * Specifically designed for use in multiple view applications.
  * Requires: jQuery Mobile 1.3+ and ArcGIS API for JavaScript v3.5+
  * @author Andy Gup
@@ -30,18 +30,15 @@ var jQueryHelper = function(/* Map */ map){
     this.rotatedFlag = false;
 
     /**
-     * Local Storage ENUMs
+     * Constant variables
      * @type {Object}
      */
-    this.localStorageEnum = (function(){
+    this.localEnum = (function(){
         var values = {
-            ZOOM_LEVEL:"zoom_level",
-            LAT:"lat",
-            LON:"lon",
-            MAP_WIDTH:"map_width",
-            MAP_HEIGHT:"map_height",
             PORTRAIT:"portrait",
-            LANDSCAPE:"landscape"
+            LANDSCAPE:"landscape",
+            DELAY: 400  //Delay in ms to wait for view to settle.
+                        //You might have to experiment with this to get max performance.
         }
 
         return values;
@@ -103,13 +100,20 @@ var jQueryHelper = function(/* Map */ map){
 
     /**
      * Determines if phone is in PORTRAIT or LANDSCAPE mode
-     * See localStorageEnum() for constant values
+     * See localEnum() for constant values
      * @returns {string}
      */
     this.getOrientation = function(){
-       return  window.innerHeight > window.innerWidth ?
-            this.localStorageEnum().PORTRAIT :
-            this.localStorageEnum().LANDSCAPE;
+
+        if(typeof window.orientation != "undefined"){
+            if(window.orientation == 0 || window.orientation == 180) return this.localEnum().PORTRAIT;
+            if(window.orientation == 90 || window.orientation == 270) return this.localEnum().LANDSCAPE;
+        }
+        else{
+            return  window.innerHeight > window.innerWidth ?
+                this.localEnum().PORTRAIT :
+                this.localEnum().LANDSCAPE;
+        }
     }
 
     /**
@@ -126,6 +130,7 @@ var jQueryHelper = function(/* Map */ map){
 
     /**
      * Pulls a saved location from localStorage
+     * Requires that setCenterPt() has been set.
      * @returns {null}
      */
     this.getCenterPt = function(){
@@ -143,6 +148,9 @@ var jQueryHelper = function(/* Map */ map){
         return value;
     }
 
+    /**
+     * Activates the orientation listener and listens for native events.
+     */
     this.setOrientationListener = function(){
         //Handle orientation events to allow for resizing the map and working around
         //jQuery mobile bugs related to how and when the view settles after such an event
@@ -160,6 +168,9 @@ var jQueryHelper = function(/* Map */ map){
         }.bind(this), false);
     }
 
+    /**
+     * Automatically sets new center point in local storage.
+     */
     this.setPanListener = function(){
         this.map.on("pan-end",function(){
             var center = this.map.extent.getCenter();
@@ -167,6 +178,10 @@ var jQueryHelper = function(/* Map */ map){
         }.bind(this))
     }
 
+    /**
+     * Automatically sets new center point and zoom level in
+     * local storage.
+     */
     this.setZoomListener = function(){
         this.map.on("zoom-end",function(){
             var center = this.map.extent.getCenter();
@@ -175,7 +190,11 @@ var jQueryHelper = function(/* Map */ map){
         }.bind(this))
     }
 
-    this.setPageChangeListener = function(pageId){
+    /**
+     * Sets internal page listeners
+     * @param pageId
+     */
+    this.setPageChangeListeners = function(pageId){
         $('#' + pageId).on("pagebeforehide",function(){
             this.orientation = this.getOrientation();
             console.log("orientation before hide = " + this.orientation)
@@ -184,18 +203,7 @@ var jQueryHelper = function(/* Map */ map){
         $('#' + pageId).on("pageshow",function(){
             console.log("home pageshow event");
             var currentOrientation = this.getOrientation();
-            if(currentOrientation != this.orientation || this.rotatedFlag == true){
-                this.map.destroy();
-                this._createNewMap(false);
-                this.rotatedFlag = false;
-
-                console.log("home pageshow complete")
-            }
-            else{
-                console.log("orientation is equal: " + this.orientation + ", " + currentOrientation)
-                this.map.resize();
-                this.map.reposition();
-            }
+            this._destroyAndRecreateMap(currentOrientation);
         }.bind(this))
     }
 
@@ -204,12 +212,15 @@ var jQueryHelper = function(/* Map */ map){
         timerDelay != "undefined" ? timeout = timerDelay : timeout = 500;
         setTimeout((function(){
             console.log("rotate timer complete");
-            this._centerMap();
+
+            var locationStr = this.getCenterPt().split(",");
+            this._centerMap(locationStr[0],locationStr[1],locationStr[2])
+
         }).bind(this),timeout);
     }
 
     this.resetMap = function(height,width,zoom,callback){
-        if(this.getOrientation() == this.localStorageEnum().PORTRAIT){
+        if(this.getOrientation() == this.localEnum().PORTRAIT){
             this.map.width = width;
             this.map.height = height;
         }
@@ -218,7 +229,25 @@ var jQueryHelper = function(/* Map */ map){
             this.map.height = width;
         }
 
-        return callback(true);
+        return callback();
+    }
+
+    this.destroyMap = function(){
+        this.map.destroy();
+    }
+
+    this._destroyAndRecreateMap = function(currentOrientation){
+
+        if(currentOrientation != this.orientation || this.rotatedFlag == true){
+            this.destroyMap();
+            this._createNewMap(false);
+            this.rotatedFlag = false;
+        }
+        else{
+            console.log("orientation is equal: " + this.orientation + ", " + currentOrientation)
+            this.map.resize();
+            this.map.reposition();
+        }
     }
 
     this._createNewMap = function(/* boolean */ autoCenter){
@@ -242,20 +271,21 @@ var jQueryHelper = function(/* Map */ map){
                 }.bind(this));
             }
             else{
-                this._centerMap();
+                var locationStr = this.getCenterPt().split(",");
+                this._centerMap(locationStr[0],locationStr[1],locationStr[2])
             }
         }
     }
 
-    this._centerMap = function(){
+    this._centerMap = function(/* number */ lat, /* number */ lon, /* int */ wkid){
         var locationStr = this.getCenterPt().split(",");
         if(locationStr instanceof Array){
             var wgsPt = null;
-            if(locationStr[2] = 4326){
-                wgsPt = new esri.geometry.Point(locationStr[1],locationStr[0]);
+            if(wkid = 4326){
+                wgsPt = new esri.geometry.Point(lat,lon);
             }
             else{
-                wgsPt = new esri.geometry.Point(locationStr[0],locationStr[1], new esri.SpatialReference({ wkid: locationStr[2] }));
+                wgsPt = new esri.geometry.Point(lat,lon, new esri.SpatialReference({ wkid: wkid }));
             }
 
             this.map.centerAt(wgsPt);
@@ -272,7 +302,7 @@ var jQueryHelper = function(/* Map */ map){
         this.currentPageID = this._getActivePage();
 
         this.setOrientationListener();
-        this.setPageChangeListener(this.currentPageID);
+        this.setPageChangeListeners(this.currentPageID);
 
 //        Set these listeners from within your application!
 //        this.setPanListener();
