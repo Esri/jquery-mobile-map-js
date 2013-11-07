@@ -60,7 +60,7 @@
     </div>
 
     <script src="src/jQueryHelper.js"></script>
-    <script type="text/javascript" src="http://js.arcgis.com/3.7compact"></script>
+    <script type="text/javascript" src="http://js.arcgis.com/3.7/"></script>
 
     <script>
 
@@ -115,11 +115,11 @@
                             console.log("ps " + position.coords.longitude + ", " + position.coords.latitude)
                             var wgsPt = new esri.geometry.Point(position.coords.longitude,position.coords.latitude);
                             map.graphics.add(new esri.Graphic(wgsPt, markerSymbol));
-                            map.centerAndZoom(wgsPt,12);
+                            map.centerAndZoom(wgsPt,9);
 
                             //Set jQueryHelper properties
                             helper.setCenterPt(position.coords.latitude,position.coords.longitude,4326);
-                            helper.setZoom(12);
+                            helper.setZoom(9);
                         }
                     }
 

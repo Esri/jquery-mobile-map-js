@@ -169,11 +169,11 @@
                     if(position.coords.latitude != null || position.coords.longitude != null){
                         var wgsPt = new esri.geometry.Point(position.coords.longitude,position.coords.latitude);
                         map.graphics.add(new esri.Graphic(wgsPt, markerSymbol));
-                        map.centerAndZoom(wgsPt, 14);
+                        map.centerAndZoom(wgsPt, 9);
 
                         //Set jQueryHelper properties
                         helper.setCenterPt(position.coords.latitude,position.coords.longitude,4326);
-                        helper.setZoom(14);
+                        helper.setZoom(9);
                     }
                 }
 
