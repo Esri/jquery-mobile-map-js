@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>-->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Basic jQuery Mobile Map</title>
+    <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.7/js/esri/css/esri.css">
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+    <style type="text/css">
+        html,body, div[data-role ="page"] {
+            height: 100%;
+            width: 100%;
+            margin: 0px;
+            padding: 0px;
+        }
+        .ui-header{
+            margin: 0px !important;
+            padding: 0px !important;
+            float: left;
+        }
+        .ui-content{
+            height: 100%;
+            width: 100%;
+            margin: 0px;
+            padding: 0px;
+        }
+        #mapDiv {
+            position: absolute;
+            background-color: #EEEEDD;
+            height: 100%;
+            width: 100%;
+            padding: 0px;
+            z-index: 0;
+            left: 0px;
+
+        }
+    </style>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+</head>
+
+<body>
+    <div data-role="page" id="home">
+    
+        <div data-theme="a" data-role="header" data-position="fixed">
+            <h3>HTML5 Geolocation</h3>
+        </div>
+    
+        <div data-role="content">
+            <div id="mapDiv"></div>
+        </div>
+
+        <script type="text/javascript">
+            $( '#home' ).on( 'pageinit',function(event){
+                jqueryInit();
+            });
+        </script>
+    
+    </div>
+
+    <script src="src/jQueryHelper.js"></script>
+    <script type="text/javascript" src="http://js.arcgis.com/3.7compact"></script>
+
+    <script>
+
+        function jqueryInit(){
+
+            require(["esri/map","esri/symbols/PictureMarkerSymbol","dojo/on","dojo/domReady!"],
+                function(Map,PictureMarkerSymbol,on) {
+
+                    var helper = null;
+
+                    // Create map
+                    var map = new Map("mapDiv",{
+                        basemap: "streets",
+                        center: [-98.5,39.8],
+                        zoom: 4
+                    });
+
+                    // Wait until map has loaded before starting geolocation
+                    map.on("load",init);
+
+                    // Create the marker symbol
+                    var markerSymbol = new PictureMarkerSymbol({
+                        "angle":0,
+                        "xoffset":0,
+                        "yoffset":0,
+                        "type":"esriPMS",
+                        "url":"images/green-pin.png",
+                        "width":35,
+                        "height":35
+                    })
+
+                    function init(){
+                        try{
+                            helper = new jQueryHelper(map);
+                        }
+                        catch(err) {
+                            console.log("Unable to initialize jQueryHelper: " + err.message);
+                        }
+
+                        map.reposition();
+                        map.resize();
+                        startGeolocation();
+                    }
+
+                    function startGeolocation(){
+                        navigator.geolocation.getCurrentPosition(locationSuccess,locationError,{setHighAccuracy:true});
+                    }
+
+                    // Handle location success
+                    function locationSuccess(position){
+                        if(position.coords.latitude != null || position.coords.longitude != null){
+                            console.log("ps " + position.coords.longitude + ", " + position.coords.latitude)
+                            var wgsPt = new esri.geometry.Point(position.coords.longitude,position.coords.latitude);
+                            map.graphics.add(new esri.Graphic(wgsPt, markerSymbol));
+                            map.centerAndZoom(wgsPt,12);
+
+                            //Set jQueryHelper properties
+                            helper.setCenterPt(position.coords.latitude,position.coords.longitude,4326);
+                            helper.setZoom(12);
+                        }
+                    }
+
+                    function locationError(err){
+                        console.log("locationError: " + err.message);
+                    }
+
+                }
+
+            );
+        }
+    </script>    
+</body>
+</html>

@@ -63,6 +63,12 @@
         <div id="mapDiv"></div>
     </div>
 
+    <script type="text/javascript">
+        $( '#home' ).on( 'pageinit',function(event){
+            jqueryInit();
+        });
+    </script>
+
 </div>
 <div data-role="page" id="settings" data-add-back-btn="true">
     <div data-role="header" data-position="fixed">
@@ -84,16 +90,18 @@
 <script src="http://js.arcgis.com/3.7/"></script>
 
 <script>
-    var map, helper = null;
-    var pageId = null;
-    var geoEnabled = true;
 
-    require(["esri/map","esri/symbols/PictureMarkerSymbol","dojo/domReady!"],
+    function jqueryInit(){
+        require(["esri/map","esri/symbols/PictureMarkerSymbol","dojo/domReady!"],
             function(Map,PictureMarkerSymbol) {
-                map = new Map("mapDiv", {
-                    basemap: "topo",
-                    center: [-122.45,37.75], // long, lat
-                    zoom: 13
+
+                var helper = null;
+                var geoEnabled = true;
+
+                var map = new Map("mapDiv", {
+                    basemap: "streets",
+                    center: [-98.5,39.8], // long, lat
+                    zoom: 4
                 });
 
                 ////////////////////
@@ -109,7 +117,7 @@
                         helper = new jQueryHelper(map);
                     }
                     catch(err) {
-                        console.log("Unable to initialize jQueryHelper " + err.message);
+                        console.log("Unable to initialize jQueryHelper: " + err.message);
                     }
 
                     //Some browsers don't show full height after onLoad
@@ -172,8 +180,9 @@
                 function locationError(err){
                     console.log("LocationError: " + err.message);
                 }
-
-            });
+            }
+        );
+    }
 </script>
 
 </body>

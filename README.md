@@ -7,11 +7,12 @@ Without this library, a map may perform inconsistently or break when a user rota
 
 ##How to use?
 
-See the included demo app: index_twopage.html.
+		var helper = new jQueryHelper(/* esri.map */ map);
 		
 ##Features
 
 * jQueryHelper.js - This library takes over the life cycle of the map when users navigate to a child view. 
+* Two samples - index.html is a single page mobile app and index_twopage.html demonstrates a two page mobile app.
 * Helper methods for handling more complex user interface situations that require manipulation of height and width.
 * Custom jQuery event "helper-map-loaded" - notifies you when map has been recreated so that you can redraw or requery features as appropriate.
 

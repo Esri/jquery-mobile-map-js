@@ -9,7 +9,7 @@ var jQueryHelper = function(/* Map */ map){
     this.map = map;
     this.mapId = map.id;
     this.basemap = map._basemap;
-    this.currentPageID = pageId;
+    this.currentPageID = null;
     this.orientation = null;
     this.slider = this.map._slider;
 
@@ -131,7 +131,7 @@ var jQueryHelper = function(/* Map */ map){
     /**
      * Pulls a saved location from localStorage
      * Requires that setCenterPt() has been set.
-     * @returns {null}
+     * @returns String x,y,spatialReference
      */
     this.getCenterPt = function(){
         var value = null;
@@ -278,8 +278,7 @@ var jQueryHelper = function(/* Map */ map){
     }
 
     this._centerMap = function(/* number */ lat, /* number */ lon, /* int */ wkid){
-        var locationStr = this.getCenterPt().split(",");
-        if(locationStr instanceof Array){
+        if(isNaN(lat) == false && isNaN(lon) == false && isNaN(wkid) == false){
             var wgsPt = null;
             if(wkid == 4326){
                 wgsPt = new esri.geometry.Point(lon,lat);
@@ -289,9 +288,11 @@ var jQueryHelper = function(/* Map */ map){
             }
 
             this.map.centerAt(wgsPt);
+            console.log("map centered");
         }
-
-        console.log("map centered");
+        else{
+            console.log("Null value detected. Is setCenterPt() set?");
+        }
     }
 
     this._getActivePage = function(){
