@@ -91,15 +91,16 @@
 
 <script>
 
+    var map, geolocation = null;
+
     function jqueryInit(){
         require(["esri/map","esri/symbols/PictureMarkerSymbol","dojo/domReady!"],
             function(Map,PictureMarkerSymbol) {
 
                 var helper = null;
                 var geoEnabled = true;
-                var geolocation = null;
 
-                var map = new Map("mapDiv", {
+                map = new Map("mapDiv", {
                     basemap: "streets",
                     center: [-98.5,39.8], // long, lat
                     zoom: 4
