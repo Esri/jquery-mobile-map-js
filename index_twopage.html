@@ -97,6 +97,7 @@
 
                 var helper = null;
                 var geoEnabled = true;
+                var geolocation = null;
 
                 var map = new Map("mapDiv", {
                     basemap: "streets",
@@ -143,6 +144,12 @@
                     var test = $(this);
                     var value = test[0].selectedIndex == 1 ? true:false;
                     geoEnabled = value;
+
+                    if(geoEnabled == false){
+                        navigator.geolocation.clearWatch(geolocation);
+                        geolocation = null;
+                        console.log("Geolocation off");
+                    }
                 })
 
                 ////////////////////
@@ -161,7 +168,7 @@
                 })
 
                 function startGeolocation(){
-                    navigator.geolocation.getCurrentPosition(locationSuccess,locationError,{setHighAccuracy:true});
+                    geolocation = navigator.geolocation.getCurrentPosition(locationSuccess,locationError,{setHighAccuracy:true});
                 }
 
                 // Handle location success
