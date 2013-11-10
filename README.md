@@ -3,7 +3,7 @@ jquery-mobile-map-js
 
 A lightweight mobile helper library that automatically recenters the map after phone orientation changes and view transitions. Use it with single and multiple view jQuery mapping apps.
 
-Without this library, a map may perform inconsistently or break when a user rotates a device on the map page or child pages. 
+Without this library, a map may perform inconsistently when a user rotates a device on the map page or child pages. 
 
 ##How to use?
 
