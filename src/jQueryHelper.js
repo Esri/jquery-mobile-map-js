@@ -160,7 +160,7 @@ var jQueryHelper = function(/* Map */ map){
         window.addEventListener(orientationEvent, function () {
             if(this._getActivePage() == this.currentPageID){
                 this.recenterOnRotate(400);
-                this.rotatedFlag = false;   console.log("RORATTTTATE")
+                this.rotatedFlag = false;
             }
             else{
                 this.rotatedFlag = true;
@@ -278,7 +278,7 @@ var jQueryHelper = function(/* Map */ map){
     }
 
     this._centerMap = function(/* number */ lat, /* number */ lon, /* int */ wkid){
-        if(isNaN(lat) == false && isNaN(lon) == false && isNaN(wkid) == false){
+        if(!isNaN(lat) && !isNaN(lon) && !isNaN(wkid)){
             var wgsPt = null;
             if(wkid == 4326){
                 wgsPt = new esri.geometry.Point(lon,lat);
