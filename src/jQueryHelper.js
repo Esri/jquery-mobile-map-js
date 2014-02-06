@@ -174,7 +174,7 @@ var jQueryHelper = function(/* Map */ map){
     this.setPanListener = function(){
         this.map.on("pan-end",function(){
             var center = this.map.extent.getCenter();
-            this.setCenterPt(center.x,center.y);
+            this.setCenterPt(center.x,center.y,this.map.spatialReference);
         }.bind(this))
     }
 
@@ -185,7 +185,7 @@ var jQueryHelper = function(/* Map */ map){
     this.setZoomListener = function(){
         this.map.on("zoom-end",function(){
             var center = this.map.extent.getCenter();
-            this.setCenterPt(center.x,center.y);
+            this.setCenterPt(center.x,center.y,this.map.spatialReference);
             this.setZoom(this.map.getZoom());
         }.bind(this))
     }
@@ -277,14 +277,14 @@ var jQueryHelper = function(/* Map */ map){
         }
     }
 
-    this._centerMap = function(/* number */ lat, /* number */ lon, /* int */ wkid){
-        if(!isNaN(lat) && !isNaN(lon) && !isNaN(wkid)){
+    this._centerMap = function(/* number */ x, /* number */ y, /* int */ wkid){   console.log("Ha " + typeof map.extent)
+        if(!isNaN(x) && !isNaN(y) && !isNaN(wkid)){
             var wgsPt = null;
             if(wkid == 4326){
-                wgsPt = new esri.geometry.Point(lon,lat);
+                wgsPt = new esri.geometry.Point(y,x);
             }
-            else{
-                wgsPt = new esri.geometry.Point(lon,lat, new esri.SpatialReference({ wkid: wkid }));
+            else if(wkid = 102100){
+                wgsPt = new esri.geometry.Point(x,y, new esri.SpatialReference({ wkid: wkid }));
             }
 
             this.map.centerAt(wgsPt);
@@ -311,6 +311,10 @@ var jQueryHelper = function(/* Map */ map){
 
         this.setWidth((this.map).width);
         this.setHeight((this.map).height);
+
+        var center = this.map.extent.getCenter();
+        this.setCenterPt(center.x,center.y,this.map.spatialReference.wkid);
+        this.setZoom(this.map.getZoom());
 
     }.bind(this)()
 }
