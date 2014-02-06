@@ -159,8 +159,8 @@ var jQueryHelper = function(/* Map */ map){
 
         window.addEventListener(orientationEvent, function () {
             if(this._getActivePage() == this.currentPageID){
-                this.rotateScreen(400);
-                this.rotatedFlag = false;
+                this.recenterOnRotate(400);
+                this.rotatedFlag = false;   console.log("RORATTTTATE")
             }
             else{
                 this.rotatedFlag = true;
@@ -207,7 +207,7 @@ var jQueryHelper = function(/* Map */ map){
         }.bind(this))
     }
 
-    this.rotateScreen = function(/* int */ timerDelay){
+    this.recenterOnRotate = function(/* int */ timerDelay){
         var timeout = null;
         timerDelay != "undefined" ? timeout = timerDelay : timeout = 500;
         setTimeout((function(){
