@@ -30,6 +30,12 @@ var jQueryHelper = function(/* Map */ map){
     this.rotatedFlag = false;
 
     /**
+     * Map debounce delay in milliseconds
+     * @type {number}
+     */
+    this.DEBOUNCE_DELAY = 250;
+
+    /**
      * Constant variables
      * @type {Object}
      */
@@ -165,7 +171,7 @@ var jQueryHelper = function(/* Map */ map){
             else{
                 this.rotatedFlag = true;
             }
-        },250).bind(this), false);
+        },this.DEBOUNCE_DELAY).bind(this), false);
     }
 
     /**
@@ -298,7 +304,7 @@ var jQueryHelper = function(/* Map */ map){
         }
     }
 
-    this._centerMap = function(/* number */ x, /* number */ y, /* int */ wkid){   console.log("Ha " + typeof map.extent)
+    this._centerMap = function(/* number */ x, /* number */ y, /* int */ wkid){
         if(!isNaN(x) && !isNaN(y) && !isNaN(wkid)){
             var wgsPt = null;
             if(wkid == 4326){
