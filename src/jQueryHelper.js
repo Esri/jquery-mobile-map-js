@@ -283,11 +283,15 @@ var jQueryHelper = function(/* Map */ map){
             var slider = this.slider != null ? "small" : false;
             this.map = new esri.Map(this.mapId, {
                 basemap: this.basemap,
+                center: [locationStr[1],locationStr[0]], // long, lat
                 zoom: this.getZoom(),
                 sliderStyle: slider
             });
 
             this.map.on("load",function(){
+                this.map.resize();
+                this.map.reposition();
+                this._centerMap(locationStr[0],locationStr[1],locationStr[2])
                 $.event.trigger({
                     type: "helper-map-loaded",
                     message: "jQueryHelper map loaded",
