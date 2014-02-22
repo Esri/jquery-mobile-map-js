@@ -267,7 +267,7 @@ var jQueryHelper = function(/* Map */ map){
 
         if(currentOrientation != this.orientation || this.rotatedFlag == true){
             this.destroyMap();
-            this._createNewMap(false);
+            this._createNewMap();
             this.rotatedFlag = false;
         }
         else{
@@ -288,19 +288,16 @@ var jQueryHelper = function(/* Map */ map){
                 sliderStyle: slider
             });
 
-            if(autoCenter == false){
-                this.map.on("load",function(){
-                    $.event.trigger({
-                        type: "helper-map-loaded",
-                        message: "jQueryHelper map loaded",
-                        time: new Date()
-                    })
-                }.bind(this));
-            }
-            else{
-                var locationStr = this.getCenterPt().split(",");
+            this.map.on("load",function(){
+                this.map.resize();
+                this.map.reposition();
                 this._centerMap(locationStr[0],locationStr[1],locationStr[2])
-            }
+                $.event.trigger({
+                    type: "helper-map-loaded",
+                    message: "jQueryHelper map loaded",
+                    time: new Date()
+                })
+            }.bind(this));
         }
     }
 
