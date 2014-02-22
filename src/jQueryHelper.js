@@ -267,7 +267,7 @@ var jQueryHelper = function(/* Map */ map){
 
         if(currentOrientation != this.orientation || this.rotatedFlag == true){
             this.destroyMap();
-            this._createNewMap(false);
+            this._createNewMap();
             this.rotatedFlag = false;
         }
         else{
@@ -283,24 +283,17 @@ var jQueryHelper = function(/* Map */ map){
             var slider = this.slider != null ? "small" : false;
             this.map = new esri.Map(this.mapId, {
                 basemap: this.basemap,
-                center: [locationStr[1],locationStr[0]], // long, lat
                 zoom: this.getZoom(),
                 sliderStyle: slider
             });
 
-            if(autoCenter == false){
-                this.map.on("load",function(){
-                    $.event.trigger({
-                        type: "helper-map-loaded",
-                        message: "jQueryHelper map loaded",
-                        time: new Date()
-                    })
-                }.bind(this));
-            }
-            else{
-                var locationStr = this.getCenterPt().split(",");
-                this._centerMap(locationStr[0],locationStr[1],locationStr[2])
-            }
+            this.map.on("load",function(){
+                $.event.trigger({
+                    type: "helper-map-loaded",
+                    message: "jQueryHelper map loaded",
+                    time: new Date()
+                })
+            }.bind(this));
         }
     }
 
