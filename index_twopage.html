@@ -121,16 +121,16 @@
 
                 function init(){
 
+                    //Some browsers don't show full height after onLoad
+                    map.reposition();
+                    map.resize();
+
                     try{
                         helper = new jQueryHelper(map);
                     }
                     catch(err) {
                         console.log("Unable to initialize jQueryHelper: " + err.message);
                     }
-
-                    //Some browsers don't show full height after onLoad
-                    map.reposition();
-                    map.resize();
 
                     startGeolocation();
                 }

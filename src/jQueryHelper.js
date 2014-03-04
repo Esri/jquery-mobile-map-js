@@ -8,6 +8,7 @@
 var jQueryHelper = function(/* Map */ map){
     this.map = map;
     this.mapId = map.id;
+    this.mapDiv = document.getElementById(map.id);
     this.basemap = map._basemap;
     this.currentPageID = null;
     this.orientation = null;
@@ -22,12 +23,6 @@ var jQueryHelper = function(/* Map */ map){
      * @type {boolean}
      */
     this.autoCenter = true;
-
-    /**
-     * Detects if phone was rotated while app view is on a child screen.
-     * @type {boolean}
-     */
-    this.rotatedFlag = false;
 
     /**
      * Map debounce delay in milliseconds
@@ -166,10 +161,6 @@ var jQueryHelper = function(/* Map */ map){
         window.addEventListener(orientationEvent, this.debounceMap(function(){
             if(this._getActivePage() == this.currentPageID){
                 this.recenterOnRotate(400);
-                this.rotatedFlag = false;
-            }
-            else{
-                this.rotatedFlag = true;
             }
         },this.DEBOUNCE_DELAY).bind(this), false);
     }
@@ -230,7 +221,7 @@ var jQueryHelper = function(/* Map */ map){
         $('#' + pageId).on("pageshow",function(){
             console.log("home pageshow event");
             var currentOrientation = this.getOrientation();
-            this._destroyAndRecreateMap(currentOrientation);
+            this._reinflatMap(currentOrientation);
         }.bind(this))
     }
 
@@ -246,37 +237,88 @@ var jQueryHelper = function(/* Map */ map){
         }).bind(this),timeout);
     }
 
-    this.resetMap = function(height,width,zoom,callback){
-        if(this.getOrientation() == this.localEnum().PORTRAIT){
-            this.map.width = width;
-            this.map.height = height;
-        }
-        else{
-            this.map.width = height;
-            this.map.height = width;
-        }
-
-        return callback();
+    this._getMapDivVisibility = function(){
+        var id = this.map.id;
+        return $("#" + id).is(":visible");
     }
 
+    this._debounceMapReinflate = function(callback){
+        console.log("get vis " + this._getMapDivVisibility())
+        if(this._getMapDivVisibility() == false){
+            this.debounceMap(function(){
+                console.log("debounced: " + this._getMapDivVisibility());
+                callback();
+            }.bind(this),this.DEBOUNCE_DELAY)()
+        }
+        else{
+            console.log("visible!")
+        }
+    }
+
+    this.resetMap = function(height,width,zoom){
+        if(this.getOrientation() == this.localEnum().PORTRAIT){
+            //adjust map height/width
+            this.map.height = height;
+            this.map.width = width;
+
+            //adjust map div height/width
+            this.mapDiv.style.height = height;
+            this.mapDiv.style.width = width;
+
+        }
+        else{
+            //adjust map height/width
+            this.map.width = height;
+            this.map.height = width;
+
+            //adjust map div height/width
+            this.mapDiv.style.width = height;
+            this.mapDiv.style.height = width;
+        }
+    }
+
+    /**
+     * Deprecated Mar 4, 2014
+     */
     this.destroyMap = function(){
         this.map.destroy();
     }
 
-    this._destroyAndRecreateMap = function(currentOrientation){
-
-        if(currentOrientation != this.orientation || this.rotatedFlag == true){
-            this.destroyMap();
-            this._createNewMap();
-            this.rotatedFlag = false;
+    this._reinflatMap = function(currentOrientation){
+        if(this.map.height == 0 || this.map.width ==0){
+            this.debounceMap(function(){
+                this.resetMap(this.getHeight(),this.getWidth(),this.getZoom());
+                this.map.resize();
+                this.map.reposition();
+                setTimeout(function(){
+                    this.map.setZoom(this.getZoom());
+                    var locationStr = this.getCenterPt().split(",");
+                    this._centerMap(locationStr[0],locationStr[1],locationStr[2])
+                }.bind(this),350) //resize and reposition need to settle before this fires!
+            }.bind(this),this.DEBOUNCE_DELAY)()
         }
         else{
-            console.log("orientation is equal: " + this.orientation + ", " + currentOrientation)
             this.map.resize();
             this.map.reposition();
         }
+
+//        if(currentOrientation != this.orientation || this.rotatedFlag == true){
+//            this.destroyMap();
+//            this._createNewMap();
+//            this.rotatedFlag = false;
+//        }
+//        else{
+//            console.log("orientation is equal: " + this.orientation + ", " + currentOrientation)
+//            this.map.resize();
+//            this.map.reposition();
+//        }
     }
 
+    /**
+     * Deprecated Mar 4, 2014
+     * @param autoCenter
+     * @private
+     */
     this._createNewMap = function(/* boolean */ autoCenter){
         var locationStr = this.getCenterPt().split(",");
         if(locationStr instanceof Array){
