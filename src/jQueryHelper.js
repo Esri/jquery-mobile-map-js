@@ -271,13 +271,6 @@ var jQueryHelper = function(/* Map */ map){
         }
     }
 
-    /**
-     * Deprecated Mar 4, 2014
-     */
-    this.destroyMap = function(){
-        this.map.destroy();
-    }
-
     this._reinflatMap = function(currentOrientation){
         if(this.map.height == 0 || this.map.width ==0){
             this.debounceMap(function(){
@@ -295,6 +288,14 @@ var jQueryHelper = function(/* Map */ map){
             this.map.resize();
             this.map.reposition();
         }
+    }
+
+
+    /**
+     * Deprecated Mar 4, 2014
+     */
+    this.destroyMap = function(){
+        this.map.destroy();
     }
 
     /**
