@@ -220,15 +220,22 @@ var jQueryHelper = function(/* Map */ map){
     }
 
     this.recenterOnRotate = function(/* int */ timerDelay){
-        var timeout = null;
-        timerDelay != "undefined" ? timeout = timerDelay : timeout = 500;
-        setTimeout((function(){
-            console.log("rotate timer complete");
 
-            var locationStr = this.getCenterPt().split(",");
-            this._centerMap(locationStr[0],locationStr[1],locationStr[2])
+        if(this.map.height == 0 || this.map.width == 0){
+            var currentOrientation = this.getOrientation();
+            this._reinflatMap(currentOrientation);
+        }
+        else{
+            var timeout = null;
+            timerDelay != "undefined" ? timeout = timerDelay : timeout = 500;
+            setTimeout((function(){
+                console.log("rotate timer complete");
 
-        }).bind(this),timeout);
+                var locationStr = this.getCenterPt().split(",");
+                this._centerMap(locationStr[0],locationStr[1],locationStr[2])
+
+            }).bind(this),timeout);
+        }
     }
 
     this._getMapDivVisibility = function(){
@@ -271,6 +278,11 @@ var jQueryHelper = function(/* Map */ map){
         }
     }
 
+    /**
+     * Reinflate map based on specific conditions
+     * @param currentOrientation
+     * @private
+     */
     this._reinflatMap = function(currentOrientation){
         if(this.map.height == 0 || this.map.width ==0){
             this.debounceMap(function(){
