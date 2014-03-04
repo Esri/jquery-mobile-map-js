@@ -11,7 +11,6 @@ var jQueryHelper = function(/* Map */ map){
     this.mapDiv = document.getElementById(map.id);
     this.basemap = map._basemap;
     this.currentPageID = null;
-    this.orientation = null;
     this.slider = this.map._slider;
 
     /**
@@ -213,11 +212,6 @@ var jQueryHelper = function(/* Map */ map){
      * @param pageId
      */
     this.setPageChangeListeners = function(pageId){
-        $('#' + pageId).on("pagebeforehide",function(){
-            this.orientation = this.getOrientation();
-            console.log("orientation before hide = " + this.orientation)
-        }.bind(this));
-
         $('#' + pageId).on("pageshow",function(){
             console.log("home pageshow event");
             var currentOrientation = this.getOrientation();
@@ -301,17 +295,6 @@ var jQueryHelper = function(/* Map */ map){
             this.map.resize();
             this.map.reposition();
         }
-
-//        if(currentOrientation != this.orientation || this.rotatedFlag == true){
-//            this.destroyMap();
-//            this._createNewMap();
-//            this.rotatedFlag = false;
-//        }
-//        else{
-//            console.log("orientation is equal: " + this.orientation + ", " + currentOrientation)
-//            this.map.resize();
-//            this.map.reposition();
-//        }
     }
 
     /**
