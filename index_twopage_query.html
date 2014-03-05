@@ -146,7 +146,6 @@
                     $(document).on("helper-map-loaded",function(evt){
                         console.log("Helper map was loaded. " + evt.message)
                         map = helper.map;
-                        setFeatures("Colorado");
                         if(geoEnabled == true) {
                             startGeolocation();
                         }
