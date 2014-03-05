@@ -243,19 +243,6 @@ var jQueryHelper = function(/* Map */ map){
         return $("#" + id).is(":visible");
     }
 
-    this._debounceMapReinflate = function(callback){
-        console.log("get vis " + this._getMapDivVisibility())
-        if(this._getMapDivVisibility() == false){
-            this.debounceMap(function(){
-                console.log("debounced: " + this._getMapDivVisibility());
-                callback();
-            }.bind(this),this.DEBOUNCE_DELAY)()
-        }
-        else{
-            console.log("visible!")
-        }
-    }
-
     this.resetMap = function(height,width,zoom){
         if(this.getOrientation() == this.localEnum().PORTRAIT){
             //adjust map height/width
