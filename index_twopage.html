@@ -121,6 +121,10 @@
 
                 function init(){
 
+                    //Some browsers don't show full height after onLoad
+                    map.reposition();
+                    map.resize();
+
                     try{
                         helper = new jQueryHelper(map);
                     }
@@ -128,16 +132,12 @@
                         console.log("Unable to initialize jQueryHelper: " + err.message);
                     }
 
-                    //Some browsers don't show full height after onLoad
-                    map.reposition();
-                    map.resize();
-
                     startGeolocation();
                 }
 
                 // Listen for map loaded event from jqueryHelper.
                 $(document).on("helper-map-loaded",function(evt){
-                    console.log("Helper map was loaded. " + evt.message)
+                    console.log("helper-map-loaded event fired. " + evt.message)
                     map = helper.map;
 
                     if(geoEnabled == true) {
