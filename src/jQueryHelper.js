@@ -280,6 +280,11 @@ var jQueryHelper = function(/* Map */ map){
                     this.map.setZoom(this.getZoom());
                     var locationStr = this.getCenterPt().split(",");
                     this._centerMap(locationStr[0],locationStr[1],locationStr[2])
+                    $.event.trigger({
+                        type: "helper-map-loaded",
+                        message: "jQueryHelper map loaded",
+                        time: new Date()
+                    })
                 }.bind(this),350) //resize and reposition need to settle before this fires!
             }.bind(this),this.DEBOUNCE_DELAY)()
         }

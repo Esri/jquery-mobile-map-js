@@ -137,7 +137,7 @@
 
                 // Listen for map loaded event from jqueryHelper.
                 $(document).on("helper-map-loaded",function(evt){
-                    console.log("Helper map was loaded. " + evt.message)
+                    console.log("helper-map-loaded event fired. " + evt.message)
                     map = helper.map;
 
                     if(geoEnabled == true) {
