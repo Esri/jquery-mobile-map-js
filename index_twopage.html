@@ -2,17 +2,15 @@
 <html>
 <head>
     <!--
-
     Sample application to demonstrate using the jQueryHelper library.
-
     -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
     <title>Two Page jQuery Mobile Map</title>
     <link rel="stylesheet" type="text/css" href="css/themes/black-theme.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/themes/jquery.mobile.icons.min.css"/>
-    <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.css" />
+    <link rel="stylesheet" href="//js.arcgis.com/3.13/esri/css/esri.css">
+    <link rel="stylesheet" href="//code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.css" />
     <style type="text/css">
         html,body, div[data-role ="page"] {
             height: 100%;
@@ -38,7 +36,6 @@
             text-align:center;
             width: 100%;
         }
-
         #mapDiv {
             position: absolute;
             background-color: #EEEEDD;
@@ -47,11 +44,8 @@
             padding: 0px;
             z-index: 0;
             left: 0px;
-
         }
     </style>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script type="text/javascript" src="//code.jquery.com/mobile/1.4.0/jquery.mobile-1.4.0.min.js"></script>
 </head>
 
 <body>
@@ -66,12 +60,6 @@
     <div data-role="content">
         <div id="mapDiv"></div>
     </div>
-
-    <script type="text/javascript">
-        $( '#home' ).on( 'pageinit',function(event){
-            jqueryInit();
-        });
-    </script>
 
 </div>
 <div data-role="page" id="settings">
@@ -89,112 +77,100 @@
                 <option value="on" selected>On</option>
             </select>
         </div>
-     </div>
+    </div>
 </div>
 
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="text/javascript" src="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 <script src="src/jQueryHelper.js"></script>
 <script src="http://js.arcgis.com/3.13/"></script>
 
 <script>
 
+    $( '#home' ).on( 'pageinit',function(event){
+        jqueryInit();
+    });
+
     var map, geolocation = null;
 
     function jqueryInit(){
         require(["esri/map","esri/symbols/PictureMarkerSymbol","dojo/domReady!"],
-            function(Map,PictureMarkerSymbol) {
-
-                var helper = null;
-                var geoEnabled = true;
-
-                map = new Map("mapDiv", {
-                    basemap: "streets",
-                    center: [-98.5,39.8], // long, lat
-                    zoom: 4
-                });
-
-                ////////////////////
-                //Listeners
-                ////////////////////
-
-                //Listen for map load event
-                map.on("load",init);
-
-                function init(){
-
-                    //Some browsers don't show full height after onLoad
-                    map.reposition();
-                    map.resize();
-
-                    try{
-                        helper = new jQueryHelper(map);
-                    }
-                    catch(err) {
-                        console.log("Unable to initialize jQueryHelper: " + err.message);
-                    }
-
-                    startGeolocation();
-                }
-
-                // Listen for map loaded event from jqueryHelper.
-                $(document).on("helper-map-loaded",function(evt){
-                    console.log("helper-map-loaded event fired. " + evt.message)
-                    map = helper.map;
-
-                    if(geoEnabled == true) {
+                function(Map,PictureMarkerSymbol) {
+                    var helper = null;
+                    var geoEnabled = true;
+                    map = new Map("mapDiv", {
+                        basemap: "streets",
+                        center: [-98.5,39.8], // long, lat
+                        zoom: 4
+                    });
+                    ////////////////////
+                    //Listeners
+                    ////////////////////
+                    //Listen for map load event
+                    map.on("load",init);
+                    function init(){
+                        //Some browsers don't show full height after onLoad
+                        map.reposition();
+                        map.resize();
+                        try{
+                            helper = new jQueryHelper(map);
+                        }
+                        catch(err) {
+                            console.log("Unable to initialize jQueryHelper: " + err.message);
+                        }
                         startGeolocation();
                     }
-                })
-
-                //Listen for Geolocation on/off button events
-                $("#slider-geo-on-off").change(function(event){
-                    event.stopPropagation();
-                    var test = $(this);
-                    var value = test[0].selectedIndex == 1 ? true:false;
-                    geoEnabled = value;
-
-                    if(geoEnabled == false){
-                        navigator.geolocation.clearWatch(geolocation);
-                        geolocation = null;
-                        console.log("Geolocation off");
+                    // Listen for map loaded event from jqueryHelper.
+                    $(document).on("helper-map-loaded",function(evt){
+                        console.log("helper-map-loaded event fired. " + evt.message)
+                        map = helper.map;
+                        if(geoEnabled == true) {
+                            startGeolocation();
+                        }
+                    })
+                    //Listen for Geolocation on/off button events
+                    $("#slider-geo-on-off").change(function(event){
+                        event.stopPropagation();
+                        var test = $(this);
+                        var value = test[0].selectedIndex == 1 ? true:false;
+                        geoEnabled = value;
+                        if(geoEnabled == false){
+                            navigator.geolocation.clearWatch(geolocation);
+                            geolocation = null;
+                            console.log("Geolocation off");
+                        }
+                    })
+                    ////////////////////
+                    //End of Listeners
+                    ////////////////////
+                    // Create the marker symbol
+                    var markerSymbol = new PictureMarkerSymbol({
+                        "angle":0,
+                        "xoffset":0,
+                        "yoffset":0,
+                        "type":"esriPMS",
+                        "url":"images/green-pin.png",
+                        "width":35,
+                        "height":35
+                    })
+                    function startGeolocation(){
+                        geolocation = navigator.geolocation.getCurrentPosition(locationSuccess,locationError,{setHighAccuracy:true});
                     }
-                })
-
-                ////////////////////
-                //End of Listeners
-                ////////////////////
-
-                // Create the marker symbol
-                var markerSymbol = new PictureMarkerSymbol({
-                    "angle":0,
-                    "xoffset":0,
-                    "yoffset":0,
-                    "type":"esriPMS",
-                    "url":"images/green-pin.png",
-                    "width":35,
-                    "height":35
-                })
-
-                function startGeolocation(){
-                    geolocation = navigator.geolocation.getCurrentPosition(locationSuccess,locationError,{setHighAccuracy:true});
-                }
-
-                // Handle location success
-                function locationSuccess(position){
-                    if(position.coords.latitude != null || position.coords.longitude != null){
-                        var wgsPt = new esri.geometry.Point(position.coords.longitude,position.coords.latitude);
-                        map.graphics.add(new esri.Graphic(wgsPt, markerSymbol));
-                        map.centerAndZoom(wgsPt, 9);
-
-                        //Set jQueryHelper properties
-                        helper.setCenterPt(position.coords.latitude,position.coords.longitude,4326);
-                        helper.setZoom(9);
+                    // Handle location success
+                    function locationSuccess(position){
+                        if(position.coords.latitude != null || position.coords.longitude != null){
+                            var wgsPt = new esri.geometry.Point(position.coords.longitude,position.coords.latitude);
+                            map.graphics.add(new esri.Graphic(wgsPt, markerSymbol));
+                            map.centerAndZoom(wgsPt, 9);
+                            //Set jQueryHelper properties
+                            helper.setCenterPt(position.coords.latitude,position.coords.longitude,4326);
+                            helper.setZoom(9);
+                        }
+                    }
+                    function locationError(err){
+                        console.log("LocationError: " + err.message);
                     }
                 }
-
-                function locationError(err){
-                    console.log("LocationError: " + err.message);
-                }
-            }
         );
     }
 </script>
