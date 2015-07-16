@@ -223,6 +223,7 @@ var jQueryHelper = function(/* Map */ map){
             console.log("home pageshow event");
             var currentOrientation = this.getOrientation();
             this._reinflatMap(currentOrientation);
+            this.recenterOnRotate(400);
         }.bind(this))
     }
 
