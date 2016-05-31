@@ -1,9 +1,13 @@
 jquery-mobile-map-js
 =================
 
-A lightweight helper library for use with jQuery mobile and the ArcGIS API for JavaScript. The library automatically recenters the map after phone orientation changes or view transitions. It also correctly reinflates the map where the map is hidden and then made visible again. Use this with single and multiple view jQuery mapping apps.
+A lightweight helper library for use with jQuery mobile and the ArcGIS API for JavaScript 3.x. This library isn't 
+required for ArcGIS API for JavaScript v4.x.
 
-Without this library, a map may perform inconsistently. 
+The library automatically recenters the map after phone orientation changes or view transitions. It also correctly reinflates the map where the 
+map is hidden and then made visible again. Use this with single and multiple view jQuery mapping apps.
+
+Without this library, a JS API 3.x map may perform inconsistently. 
 
 ##How to use?
 
